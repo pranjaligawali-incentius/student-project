@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit</title>
+</head>
+<body>
+    <h2>Edit student</h2>
+  
+    <form method="POST" action="/edit/{{stud.id}}">
+        <input type="text" name="name" value="{{stud.name}}">
+        <input type="number" name="age" value="{{stud.age}}">
+        <button type="submit">Update</button>
+    </form>
+    
+</body>
+</html>

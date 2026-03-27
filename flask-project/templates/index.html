@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Form</title>
+</head>
+<body>
+    <h1>Welcome</h1>
+
+    <table border="1">
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Action</th>
+        </tr>
+        {% for stud in students %}
+        <tr>
+            
+            <td>{{stud.name}}</td>
+            <td>{{stud.age}}</td>
+            <td>
+                <a href="/edit/{{stud.id}}">Edit </a>
+                <a href="/delete/{{stud.id}}">Delete </a>
+              
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+     <a href="/add">ADD Student</a>
+</body>
+</html>
