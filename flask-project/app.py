@@ -16,6 +16,8 @@ class student(db.Model):
     age = db.Column(db.Integer)
     gender = db.Column(db.String(20))
     languages = db.Column(db.String(200))
+    value=db.Column(db.Boolean(False))
+
     def __repr__(self):
         return f'<student {self.name}>'
 
@@ -31,7 +33,7 @@ def get_students():
     for s in all_students:
         output.append({
             "id": s.id, "name": s.name, "age": s.age, 
-            "gender": s.gender, "languages": s.languages
+            "gender": s.gender, "languages": s.languages,"value":s.value
         })
     return jsonify(output)
 
@@ -43,7 +45,9 @@ def add():
         age = request.json.get('age',"")
         gender=request.json.get('gender',"")
         languages=request.json.get('languages',"")
-        new_stud = student(name=request.json.get("name"), age=request.json.get("age"), gender=request.json.get("gender"), languages=request.json.get("languages"))
+        languages = ",".join(languages)
+        value=request.json.get('value',"")
+        new_stud = student(name=name, age=age, gender=gender, languages=languages,value=value)
         db.session.add(new_stud)
         db.session.commit()
         return jsonify(ok=True)
@@ -52,19 +56,36 @@ def add():
 
 
 
+@app.route("/api/get_student/<int:id>", methods=['GET'])
+def get_single_student(id):
+    stud = student.query.get(id)
+    if stud:
+        return jsonify({
+            "name": stud.name, 
+            "age": stud.age,
+            "gender": stud.gender,
+            "languages": stud.languages.split(",") ,##convert to array
+            "value":stud.value
+            
+        })
+    return jsonify({"error": "Not found"})
+
+
 @app.route("/api/edit/<int:id>", methods=['POST'])
 def edit(id):
     stud = student.query.get(id) 
     if stud:
-       
         data = request.json
         stud.name = data.get("name")
         stud.age = data.get("age")
         stud.gender = data.get("gender")
         stud.languages = data.get("languages")
+        stud.value=data.get("value")
         db.session.commit()
         return jsonify(ok=True)
-    return jsonify(ok=False) 
+    return jsonify(ok=False)
+
+
 
 @app.route("/api/delete/<int:id>",methods=['DELETE'])  
 def delete(id):

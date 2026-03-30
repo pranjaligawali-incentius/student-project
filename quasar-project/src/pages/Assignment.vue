@@ -17,16 +17,16 @@
     </div>
      <div class="q-gutter-sm">
       <lable>Languages you know:</lable><br>
-      <q-checkbox dense v-model="student.lang1" label="English" color="orange" />
-      <q-checkbox dense v-model="student.lang2" label="Japneese" color="orange" />
-      <q-checkbox dense v-model="student.lang3" label="Spanish" color="orange" />
-      <q-checkbox dense v-model="student.lang4" label="Other" color="orange" />
+      <q-checkbox dense v-model="student.languages" val="English" label="English" color="orange" />
+      <q-checkbox dense v-model="student.languages" val="Japneese" label="Japneese" color="orange" />
+      <q-checkbox dense v-model="student.languages" val="Spanish" label="Spanish" color="orange" />
+      <q-checkbox dense v-model="student.languages" val="Other" label="Other" color="orange" />
     
  
     </div>
     <div class="q-pa-md q-gutter-lg">
     <div>
-  <q-item v-for="(item, index) in FormData" :key="item.id"></q-item>
+  <!--<q-item v-for="(item, index) in FormData" :key="item.id"></q-item>-->
     <q-toggle
         v-model="student.value"
         color="green"
@@ -40,13 +40,13 @@
      
     <q-btn v-if="curridx===null" color="blue" label="ADD" @click.prevent="Submit()"/>
     
-      <q-btn  color="blue" label="SHOW" @click.prevent="get_stud()"/>
+     <!-- <q-btn  color="blue" label="SHOW" @click.prevent="get_stud()"/>-->
+     
     <br>
    
   </div> 
 
 </div></div></div>
-
 <div class="q-pa-md">
     <q-table
       flat bordered
@@ -71,9 +71,10 @@
               {{ props.row.gender }}
             </q-badge>
           </q-td>
-          <q-td key="lang1" :props="props">
+         
+          <q-td key="languages" :props="props">
             <q-badge color="orange">
-              {{ props.row.lang1 ?'English':''}}, {{ props.row.lang2 ? 'Japneese':'' }}, {{ props.row.lang3  ? 'Spanish':''}}  ,{{ props.row.lang4 ? 'Other':'' }}
+              {{ props.row.languages }} 
             </q-badge>
           </q-td>
           
@@ -85,8 +86,8 @@
           </q-td>
           <q-td key="action" :props="props">
            
-            <q-badge color="white">
-                <q-btn  color="blue" label="Edit" @click.prevent="EditStudent(props.row)" prompt="true"/>
+            <q-badge color="white">'
+                <q-btn  color="blue" label="Edit" @click.prevent="$router.push(`/edit/${props.row.id}`)" />
                   <q-btn color="red" label="delete" @click="deleteStud(props.row)" demo=true />
             </q-badge>
           </q-td>
@@ -94,7 +95,7 @@
       </template>
     </q-table>
   </div>
-  <q-dialog v-model="prompt" persistent>
+ <!-- <q-dialog v-model="prompt" persistent>
       <q-card style="min-width: 350px">
         <q-card-section>
           <div class="text-h6">Edit Form</div>
@@ -129,7 +130,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-
+  -->
     <!--<q-dialog v-model="demo" persistent>
       <q-card style="min-width: 350px">
         <q-card-section>
@@ -160,10 +161,7 @@ export default {
         age:null,
         model: null,
         value: false,
-        lang1: false,
-        lang2: false,
-        lang3: false,
-        lang4: false,
+        languages:[]
         
       }
     
@@ -171,7 +169,7 @@ export default {
     options: ref(['12', '13', '14', '15', '16']),
     curridx:null,
     columns : ref( [
-      {
+    {
     name: 'name',
     required: true,
     field:'name',
@@ -183,8 +181,7 @@ export default {
   },
   { name: 'age', label: 'Age', field: 'age', sortable: true },
   { name: 'gender', field:'gender', label: 'Gender'},
-  { name: 'lang1',field:'lang1', label: 'Language'  },
- 
+  { name: 'languages',field:'languages', label: 'Language'},
   { name: 'value', field:'value' ,label: 'Correct Info' },
   { name: 'action', field:'action' ,label: 'Action' }
 
@@ -197,15 +194,9 @@ export default {
         name: '',
         gender:'',
         age:null,
-        model: null,
-        
-        
+        //model: null,
+         languages:[],
         value: false,
-        lang1: false,
-        lang2:false,
-        lang3:false,
-        lang4:false,
-        
       }
     
     ),
@@ -214,6 +205,9 @@ export default {
       demo:ref(false),
      
 }
+    },
+    created(){
+      this.get_stud();
     },
     
     methods:{
@@ -228,15 +222,11 @@ export default {
                     self.age=response.data.age;
                     self.gender=response.data.gender;
                     self.languages=response.data.languages;
-                    
+                    self.value=response.data.value;
                    }
-                   else{
-                      self.$q.notify({
-                      type: "negative",
-                      message: response.data.err_msg,
-                      position: "top",
-                    });
-                   }
+                  
+                   self.get_stud()
+
           })
         } ,
 
@@ -247,12 +237,10 @@ export default {
             
             self.FormData=response.data;
           })
-          .catch(function(err){
-           console.log(response.err)
-          })
+         
         },
         
-        EditStudent(row){
+        /*EditStudent(row){
         
         let self=this
           self.prompt=true;
@@ -264,7 +252,7 @@ export default {
       
        
         ,
-        EditItem(){
+      /*  EditItem(){
           let self=this;
          
           self.$axios.post(`/edit/${this.curridx}`,self.Editstud)
@@ -277,12 +265,11 @@ export default {
           
           })
           
-        },
-        
+        },*/    
         deleteStud(row){
         
           let self=this
-          //self.demo=true
+          
           this.$axios.delete(`/delete/${row.id}`)
           .then(function(response) {
           if (response.data.ok) {
@@ -292,10 +279,8 @@ export default {
     })
           
         }
-        
-}
         }    
-  
+      }
 
 </script>
 <style scoped>
@@ -310,6 +295,33 @@ export default {
   margin: 0 auto;
 }
 
+.q-card {
+  width: 300px !important;
+  padding: 10px !important;
+}
+
+
+.q-form {
+  gap: 2px !important; 
+}
+
+
+:deep(.q-field--filled .q-field__control) {
+  height: 34px !important; 
+  min-height: 34px !important;
+}
+
+
+:deep(.q-field__label), 
+:deep(.q-field__native) {
+  font-size: 12px !important;
+  top: 6px !important; }
+
+
+.q-btn {
+  font-size: 11px !important;
+  min-height: 28px !important;
+}
 
 .q-gutter-md {
   background: #ffffff !important; 

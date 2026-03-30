@@ -15,7 +15,9 @@
           Quasar App
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        
+        
+         <q-btn color="white" text-color="black" label="Logout" />
       </q-toolbar>
     </q-header>
 
@@ -65,7 +67,7 @@ import EssentialLink from 'components/EssentialLink.vue'
 
 const menuList = [
   {
-    icon:'student',
+    icon:'person',
     label:'Student',
     separator: true,
     path:'/student'
@@ -87,6 +89,7 @@ const menuList = [
     separator:true,
     path:'/assignment'
   }
+ 
 
 
 
