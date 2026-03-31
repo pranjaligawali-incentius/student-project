@@ -43,6 +43,10 @@ const menuList = [
    // label:'Login',
    separator:true,
     path:'/login'
+  },
+  {
+   separator:true,
+   path:'/signup'
   }
 
 ]

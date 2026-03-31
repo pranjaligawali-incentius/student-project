@@ -2,62 +2,53 @@
   <div class="login-page">
     <div class="login-card">
     <h4>Login Here !</h4>
-    <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-      <q-input
-        filled
-        v-model="username"
-        label="Username*"
-        
-        lazy-rules
-        :rules="[val => (val && val.length > 0) || 'Please type something']"
-      />
-
      
-    <q-input
-    filled
-    v-model="password"
-    :type="passwordFieldType"
-    label="Password *"
-    lazy-rules
-    :rules="[
-      val => (val !== null && val !== '') || 'Please type your password',
-      val => (val && val.length >= 8) || 'Password must be at least 8 characters'
-    ]"
- />
+    <q-input square outlined v-model="user.username" label="Username" />
 
-     
-
-      <div>
-        <q-btn label="login" type="submit" color="primary" />
-        <q-btn
-          label="Register"
-          type="register"
-          color="primary"
-          flat
-          class="q-ml-sm"
-        />
-      </div>
-    </q-form>
+    <q-input square outlined v-model="user.password" label="User password" />
+    
+    <q-btn label="Login" type="submit" @click.prevent=login() color="primary" />
+   
   </div></div>
+
 </template>
 
 <script>
-import { useQuasar } from 'quasar'
+import { SessionStorage, useQuasar } from 'quasar'
 import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 export default {
   setup() {
-    const $q = useQuasar()
-
-    const username  = ref(null)
-    const password = ref(null)
     
 
     return {
-      username,
-      password
-    
+      user:ref({ 
+        username:'',
+        password:''
+
+      })
     }
+  },
+  methods:{
+    login(){
+      let self=this;
+      self.$axios.post("/login",self.user)
+      .then(function(response){
+        if(response.data.ok){
+          self.username=response.data.username
+          self.email=response.data.email
+          self.$q.notify(response.data.message)
+        }else{
+          self.$q.notify(response.data.message)
+        }
+        
+      })
+      
+    },
+    
+
+
   }
 }
 </script>
